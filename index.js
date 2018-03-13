@@ -20,6 +20,8 @@ mongoose.connect("mongodb://127.0.0.1:27017/enjoy")
 	})
 var products = require("./module/products.js")
 var findcarousels = require("./module/findcarousels.js")
+var details = require("./module/Detalis.js")
+
 
 
 
@@ -52,20 +54,8 @@ app.post('/api/initdata',function(req,res){
 app.post('/api/getcitydata',function(req,res){
 	let {id} = req.body
 	var p = new products({
-		trace_meta :req.body.trace_meta,
-		desc :req.body.desc,
-		enjoy_url :req.body.enjoy_url,
-		entity_name :req.body.entity_name,
-		group :req.body.group,
-		id :req.body.id,
-		original_price :req.body.original_price,
-		price :req.body.price,
-		tag :req.body.tag,
-		title :req.body.title,
-		type :req.body.type,
-		url :req.body.url,
-		url_type :req.body.url_type,
-		header:req.body.header
+		group_section:req.body.group_section,
+		tabs:req.body.tabs
 
 
 	})
@@ -115,6 +105,75 @@ app.post('/api/initfindcarousel',function(req,res){
 		})
 	})
 })
+
+
+//详情请求
+app.post('/api/savedetail',function(req,res){
+	var p = new details({
+		modules:req.body.modules,
+		 basic:req.body.basic
+
+	})
+		p.save(function(err,doc){
+		if(err){
+			console.log(err)
+		}
+		details.find(function(err,doc){
+			res.json({
+			code:0,
+			msg:doc
+		})		
+		})
+	})
+
+})
+//详情页面拿到数据的请求
+
+app.post('/api/initdetail',function(req,res){
+	var id = req.body.id	
+	details.find(function(err,doc){
+		console.log(doc[0].basic.product_id,id)
+		for(var i = 0 ;i<doc.length;i++){
+			if(doc[i].basic.product_id == id){
+				res.json({
+					code:0,
+					msg:doc[i]
+				})
+			}
+		}
+	/*	for(var i=1;i<doc.length;i++){
+			if(id == doc[i].basic.product_id){
+				return res.json({
+					code:0,
+					msg:doc[i]
+				})	
+			}else{
+				res.json({
+					code:1,
+					msg:'aa'
+				})
+			}
+		}*/
+		
+	})
+})
+
+	/*if( doc.basic.product_id){
+				res.json({
+				code:0,
+				msg:doc
+			})	
+		}else{
+			res.json({
+				code:1,
+				msg:'aa'
+			})
+		}*/
+
+
+
+
+
 
 
 
