@@ -21,6 +21,8 @@ mongoose.connect("mongodb://127.0.0.1:27017/enjoy")
 var products = require("./module/products.js")
 var findcarousels = require("./module/findcarousels.js")
 var details = require("./module/Detalis.js")
+var cars = require("./module/car.js")
+
 
 
 
@@ -132,7 +134,6 @@ app.post('/api/savedetail',function(req,res){
 app.post('/api/initdetail',function(req,res){
 	var id = req.body.id	
 	details.find(function(err,doc){
-		console.log(doc[0].basic.product_id,id)
 		for(var i = 0 ;i<doc.length;i++){
 			if(doc[i].basic.product_id == id){
 				res.json({
@@ -170,8 +171,68 @@ app.post('/api/initdetail',function(req,res){
 			})
 		}*/
 
+/**********购物车************/
+app.post('/api/savecar',function(req,res){
+	let {peo,user} = req.body
+	console.log(peo[0].ID,user)
+var p = new cars({
+	peo:req.body.peo,
+	user:req.body.user
+
+	})
+	cars.find(function(err,doc){
+		console.log(doc)
+			if(!doc.length){
+					p.save(function(err,doc){
+							if(err){
+								console.log(err)
+							}
+							cars.find(function(err,doc){
+								res.json({
+									msg:doc
+								})
+							})
+					})
+			}else{
+				cars.findOneAndUpdate({user},req.body,{new:true},function(err,doc){
+					res.json({
+						msg:doc
+					})
+				})	
+			}
+
+			
+	return	
 
 
+	})
+
+	
+
+		
+
+
+
+
+
+
+})
+
+
+app.post('/api/findcar',function(req,res){
+	let {name} = req.body
+	/*console.log(name)*/
+	cars.find(function(err,doc){
+		/*var mm = doc.msg.filter(function(item){
+			return item.user == name
+		})*/
+		res.json({
+			code:0,
+			msg:doc
+		})
+	})
+
+})
 
 
 
